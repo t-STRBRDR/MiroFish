@@ -284,7 +284,7 @@ class OntologyGenerator:
             if len(edge.get("description", "")) > 100:
                 edge["description"] = edge["description"][:97] + "..."
         
-        # Zep API 限制：最多 10 个自定义实体类型，最多 10 个自定义边类型
+        # 限制：最多 10 个自定义实体类型，最多 10 个自定义边类型
         MAX_ENTITY_TYPES = 10
         MAX_EDGE_TYPES = 10
         
@@ -360,8 +360,12 @@ class OntologyGenerator:
             '由MiroFish自动生成，用于社会舆论模拟',
             '"""',
             '',
-            'from pydantic import Field',
-            'from zep_cloud.external_clients.ontology import EntityModel, EntityText, EdgeModel',
+            'from pydantic import BaseModel, Field',
+            '',
+            '# Base classes for ontology models (Graphiti-compatible)',
+            'EntityModel = BaseModel',
+            'EntityText = str',
+            'EdgeModel = BaseModel',
             '',
             '',
             '# ============== 实体类型定义 ==============',

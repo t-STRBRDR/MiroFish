@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from queue import Queue, Empty
 
-from zep_cloud.client import Zep
+from .graphiti_adapter import GraphitiAdapter
 
 from ..config import Config
 from ..utils.logger import get_logger
@@ -231,18 +231,13 @@ class ZepGraphMemoryUpdater:
     def __init__(self, graph_id: str, api_key: Optional[str] = None):
         """
         初始化更新器
-        
+
         Args:
-            graph_id: Zep图谱ID
-            api_key: Zep API Key（可选，默认从配置读取）
+            graph_id: 图谱ID
+            api_key: 保留参数，不再使用
         """
         self.graph_id = graph_id
-        self.api_key = api_key or Config.ZEP_API_KEY
-        
-        if not self.api_key:
-            raise ValueError("ZEP_API_KEY未配置")
-        
-        self.client = Zep(api_key=self.api_key)
+        self.adapter = GraphitiAdapter.get_or_create(graph_id)
         
         # 活动队列
         self._activity_queue: Queue = Queue()
@@ -405,11 +400,7 @@ class ZepGraphMemoryUpdater:
         # 带重试的发送
         for attempt in range(self.MAX_RETRIES):
             try:
-                self.client.graph.add(
-                    graph_id=self.graph_id,
-                    type="text",
-                    data=combined_text
-                )
+                self.adapter.add_episode(combined_text, source_description="simulation_activity")
                 
                 self._total_sent += 1
                 self._total_items_sent += len(activities)

@@ -16,8 +16,8 @@ dependencies = [
     # LLM 相关
     "openai>=1.0.0",
     
-    # Zep Cloud
-    "zep-cloud==3.13.0",
+    # Graphiti (local graph DB)
+    "graphiti-core[google-genai,kuzu]>=0.5.0",
     
     # OASIS 社交媒体模拟
     "camel-oasis==0.2.5",
